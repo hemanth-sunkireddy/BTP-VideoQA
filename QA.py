@@ -201,21 +201,28 @@ print("✅ Saved grouped (long) version to long-answer.csv\n")
 
 # Build flat list in memory (sentence -> timestamp)
 # ----------------------------
-flat_sentences = []  # [(filename, sentence, timestamp)]
+flat_sentences = []
 
 for filename, group_ts, group_text, indiv_ts_list in merged_results:
-    # Split group text into individual sentences using full stop
-    indiv_sents = [s.strip() for s in re.split(r'\.\s+', group_text) if s.strip()]
-    indiv_ts_list = indiv_ts_list or []
-    
-    # Map each sentence to its corresponding individual timestamp
-    for i, s in enumerate(indiv_sents):
-        if s.endswith('.'):
-            s = s[:-1].strip()
-        ts = indiv_ts_list[i] if i < len(indiv_ts_list) else group_ts
+    # Split sentences wherever '.', '?', or '!' appears
+    indiv_sents = re.split(r'[.?!]', group_text.strip())
+
+    # Skip this group if no individual timestamps are available
+    if not indiv_ts_list:
+        print(f"⚠️ Skipping {filename} — no individual timestamps available.")
+        continue
+
+    # Make sure we don’t go out of range
+    n = min(len(indiv_sents), len(indiv_ts_list))
+
+    for i in range(n):
+        s = indiv_sents[i].strip()
+        if not s:
+            continue  # skip empty parts
+        ts = indiv_ts_list[i]
         flat_sentences.append((filename, s, ts))
 
-print(f"✅ Built in-memory flat mapping with {len(flat_sentences)} sentences")
+print(f"✅ Built flat mapping with {len(flat_sentences)} sentences (using only individual timestamps)")
 
 # ----------------------------
 # Build flat dict: { sentence : (filename, timestamp) }
@@ -223,19 +230,30 @@ print(f"✅ Built in-memory flat mapping with {len(flat_sentences)} sentences")
 flat_sentence_map = {}
 
 for filename, group_ts, group_text, indiv_ts_list in merged_results:
-    indiv_sents = [s.strip() for s in re.split(r'\.\s+', group_text) if s.strip()]
-    indiv_ts_list = indiv_ts_list or []
+    # Split sentences on '.', '?', or '!' (no fallback)
+    indiv_sents = [s.strip() for s in re.split(r'[.?!]', group_text.strip()) if s.strip()]
 
-    for i, s in enumerate(indiv_sents):
-        if s.endswith('.'):
-            s = s[:-1].strip()
-        ts = indiv_ts_list[i] if i < len(indiv_ts_list) else group_ts
-        # Store sentence → (filename, timestamp)
+    # Skip if there are no individual timestamps
+    if not indiv_ts_list:
+        print(f"⚠️ Skipping {filename} — no individual timestamps available for mapping.")
+        continue
+
+    n = min(len(indiv_sents), len(indiv_ts_list))
+
+    for i in range(n):
+        s = indiv_sents[i].strip()
+        if not s:
+            continue
+        ts = indiv_ts_list[i]
         flat_sentence_map[s] = (filename, ts)
 
-print(f"✅ Built flat mapping with {len(flat_sentence_map)} sentences (key-value dict)")
+print(f"✅ Built flat mapping with {len(flat_sentence_map)} sentences (strictly using individual timestamps)")
 for key, value in flat_sentence_map.items():
     print(key, value)
+
+print("\n✅ All Sentences with Corresponding Metadata:\n")
+for sentence, (filename, ts) in flat_sentence_map.items():
+    print(f"[{filename} | {ts}] {sentence}")
     
 # Combine everything for summarization
 all_sentences = list(flat_sentence_map.keys())

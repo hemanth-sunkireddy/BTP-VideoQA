@@ -105,6 +105,7 @@ def generate_video_answer(question: str, course: str, answer_length: str = "medi
             response = requests.post(api_url, headers={"Content-Type": "application/json"}, data=json.dumps(payload))
             response.raise_for_status()
             result = response.json()
+            print(result)
 
             # ✅ Update cache with new data
             _last_api_cache = {
@@ -120,6 +121,18 @@ def generate_video_answer(question: str, course: str, answer_length: str = "medi
 
     # Directly use API output (e.g., long_answer)
     answer_segments = result.get(answer_length, [])
+
+    # 🧠 Normalize: handle {"data": [], "error": False} and []
+    if isinstance(answer_segments, dict):
+        # Use 'data' field if present, else empty list
+        answer_segments = answer_segments.get("data", [])
+    elif not isinstance(answer_segments, list):
+        # Unexpected format
+        print(f"⚠️ Unexpected answer format for {answer_length}: {type(answer_segments)}")
+        answer_segments = []
+
+    print(f"\n🎬 Using {answer_length}: {len(answer_segments)} segments")
+    print(json.dumps(answer_segments, indent=2))
     print(answer_segments)
 
     segments_info, sources = stitch_video_from_segments(answer_segments, course,  pause_duration=0.01)
