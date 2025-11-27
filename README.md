@@ -1,8 +1,8 @@
 # Automatic multimodal question and answering for video lectures
 
-**Presentation:** [Canva](https://www.canva.com/design/DAGhsnSEdRo/IxsYfXwTJMAf6B7icCmBbQ/view?utm_content=DAGhsnSEdRo&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hb2715aa87e)
+**Presentation:** [Canva]([https://www.canva.com/design/DAGhsnSEdRo/IxsYfXwTJMAf6B7icCmBbQ/view?utm_content=DAGhsnSEdRo&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hb2715aa87e](https://www.canva.com/design/DAG56O5shlc/3wjqxLLnbtI-f63GOJ2v2w/edit?utm_content=DAG56O5shlc&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton))
 
-**Demo:** [Youtube](https://www.youtube.com/watch?v=EWW-C-lGbvo)
+**Demo:** [Youtube]([https://www.youtube.com/watch?v=EWW-C-lGbvo](https://www.youtube.com/watch?v=lutgSkiieJ4))
 
 ## Project description
 This work involves synthesizing a video from a set of video lectures that answers the question raised by the student. This contains following objectives.
@@ -18,7 +18,18 @@ This work involves synthesizing a video from a set of video lectures that answer
 ## Guide
 Chiranjeevi Yarra (Spoken Language Forensics & Informatics (SLFI) group - LTRC)
 
-## Running in Local
+## Running the Frontend
+* We used Flask, HTML to run frontend server. To run
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+2. Run
+    ```bash
+    python3 main.py
+    ```
+
+## Video to Audio Conversion and Dividing Audio into Audio Chunks
 ### Prerequisities
 1. FFMPEG:  `pip3 install ffmpeg-python`
 2. PyTorch: `pip3 install torch torchvision`
@@ -36,32 +47,20 @@ Chiranjeevi Yarra (Spoken Language Forensics & Informatics (SLFI) group - LTRC)
 So please install through `apt install ffmpeg` (Linux) or `brew install ffmpeg` (Mac)
 
 ### Steps
-1. Place the input videos inside this folder `Data/Videos` with naming as `1.mp4 2.mp4 ....`
-2. Run `video-to-audio-converter.py` file.
-3. Output Audio files in `Data/Audios` directory.
-4. Now run `voice-activity-detection.ipynb` file.
-5. Output Audio Chunk files in `Data/Audio-Chunks` directory.
+* Videos should be in Data/ Folder. 
+1. Run the following notebook to complete the processing up to audio chunk generation:
 
-7. Now place SRT files in `Data/SRT-Files` directory.
-8. Run `srt_to_embeddings.ipynb` file.
-9. Output Sentences generated in `sentences.txt`, embeddings of sentences in `sentence_embeddings.index` and 
-    related mapping in `srt-embedding-metadata.tsv` file.
-10. Run `QA.ipynb` to get related sentences and corresponding video number for the question.
----
+**`pipeline-qwen.ipynb`**
 
-## Audio Configuration
+This notebook will:
+- Convert Video → Audio  
+- Perform Voice Activity Detection (VAD)  
+- Generate Audio Chunks  
+* This will generate Audio Chunks (.wav) files for each lectures.
 
-- Sample Rate: **16000 Hz** (you can change it to 32000 Hz in the script)
-- Channels: **1 (Mono)**
-- Codec: **PCM 16-bit**
-- Bit Rate: ~256 kbps (may vary)
----
-
-# Voice Activity Detection
-* Converting Audio into smaller chunks - Removing Silent Portions - Silero VAD Algorithm
-
-1. Run `silero-vad.ipynb` file.
-2. Output Audio Chunks will be generated automatically in `Data/Audio-Chunks` folder
+2. Converting Audio Chunks into SRT files using Whisper model and MFA.
+3. Encode this SRT files using QWEN model by running `Encoding.py` file.
+4. Now, the generated `.index` files use in the backend repo to use with backend.
 
 
 
