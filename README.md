@@ -1,8 +1,8 @@
 # Automatic multimodal question and answering for video lectures
 
-**Presentation:** [Canva]([https://www.canva.com/design/DAGhsnSEdRo/IxsYfXwTJMAf6B7icCmBbQ/view?utm_content=DAGhsnSEdRo&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hb2715aa87e](https://www.canva.com/design/DAG56O5shlc/3wjqxLLnbtI-f63GOJ2v2w/edit?utm_content=DAG56O5shlc&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton))
+**Presentation:** [Canva](https://www.canva.com/design/DAG56O5shlc/3wjqxLLnbtI-f63GOJ2v2w/edit?utm_content=DAG56O5shlc&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
-**Demo:** [Youtube]([https://www.youtube.com/watch?v=EWW-C-lGbvo](https://www.youtube.com/watch?v=lutgSkiieJ4))
+**Demo:** [Youtube](https://www.youtube.com/watch?v=lutgSkiieJ4)
 
 ## Project description
 This work involves synthesizing a video from a set of video lectures that answers the question raised by the student. This contains following objectives.
